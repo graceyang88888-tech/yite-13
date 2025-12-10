@@ -1,0 +1,50 @@
+[
+  {
+    "id": "c01",
+    "category": "國中",
+    "name": "國三會考衝刺數學班",
+    "teacher": "林數學",
+    "image": "images/3.jpg",
+    "description": "針對會考趨勢精準解題，強化幾何與代數觀念，短期衝刺拿高分。"
+  },
+  {
+    "id": "c02",
+    "category": "國中",
+    "name": "國中全方位英文",
+    "teacher": "Jennifer",
+    "image": "images/4.jpg",
+    "description": "從文法基礎到閱讀寫作，打造全英語學習環境，輕鬆應對英聽測驗。"
+  },
+  {
+    "id": "c03",
+    "category": "高中",
+    "name": "高一物理先修班",
+    "teacher": "張物理",
+    "image": "images/6.jpg",
+    "description": "銜接國高中物理落差，深入淺出講解力學與光學，為學測打底。"
+  },
+  {
+    "id": "c04",
+    "category": "國小",
+    "name": "小學資優科學實驗營",
+    "teacher": "王博士",
+    "image": "images/7.jpg",
+    "description": "動手做實驗，培養觀察力與邏輯思考，激發孩子對科學的熱情。"
+  },
+  {
+    "id": "c05",
+    "category": "高中",
+    "name": "學測國文寫作特訓",
+    "teacher": "陳國文",
+    "image": "images/8.jpg",
+    "description": "剖析歷屆考題，教授寫作架構與修辭技巧，讓作文成為你的加分利器。"
+  },
+  {
+    "id": "c06",
+    "category": "國小",
+    "name": "兒童美語會話班",
+    "teacher": "David",
+    "image": "images/9.jpg",
+    "description": "沈浸式教學，透過遊戲與繪本，讓孩子敢開口說英文。"
+  }
+]

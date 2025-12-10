@@ -1,0 +1,282 @@
+﻿<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>譯德文教集團 | 譯德文理補習班</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css?v=5">
+
+    <style>
+        /* 為了保證機器人樣式生效，我們也把它的 CSS 放在這裡一份 */
+        .chatbot-launcher {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background-color: #162B4E; /* 品牌深藍 */
+            border-radius: 50%;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3); /* 加深陰影 */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 99999; /* 層級最高 */
+            transition: transform 0.3s, background-color 0.3s;
+        }
+
+            .chatbot-launcher:hover {
+                transform: scale(1.1);
+                background-color: #F2AC3E; /* 品牌金黃 */
+            }
+
+        /* 聊天視窗 */
+        .chatbot-window {
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            width: 350px;
+            height: 500px;
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+            z-index: 99999;
+            overflow: hidden;
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+            border: 1px solid #eee;
+        }
+
+            .chatbot-window.open {
+                opacity: 1;
+                pointer-events: all;
+                transform: translateY(0);
+            }
+        /* 視窗內容樣式 */
+        .chat-header {
+            background-color: #162B4E;
+            color: #fff;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+            .chat-header h5 {
+                margin: 0;
+                font-size: 1.1rem;
+            }
+
+        .btn-close-chat {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            background-color: #f8f9fa;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 10px 15px;
+            border-radius: 15px;
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+
+            .message.bot {
+                background-color: #e9ecef;
+                color: #333;
+                align-self: flex-start;
+                border-bottom-left-radius: 2px;
+            }
+
+            .message.user {
+                background-color: #162B4E;
+                color: #fff;
+                align-self: flex-end;
+                border-bottom-right-radius: 2px;
+            }
+
+        .chat-input-area {
+            padding: 10px;
+            border-top: 1px solid #eee;
+            background-color: #fff;
+            display: flex;
+            gap: 10px;
+        }
+
+            .chat-input-area input {
+                flex: 1;
+                border: 1px solid #ddd;
+                border-radius: 20px;
+                padding: 8px 15px;
+                outline: none;
+            }
+
+            .chat-input-area button {
+                background-color: #F2AC3E;
+                border: none;
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                color: #fff;
+                cursor: pointer;
+            }
+
+        .typing-indicator {
+            font-size: 0.8rem;
+            color: #888;
+            margin-left: 10px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <my-header></my-header>
+
+    <main id="router-view" style="min-height: 80vh; display: flex; flex-direction: column;">
+        <div class="container text-center mt-5">
+            <div class="spinner-border text-secondary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    </main>
+
+    <div class="chatbot-launcher" id="launcher">
+        <i class="fas fa-robot fa-lg" style="color: white;"></i>
+    </div>
+
+    <div class="chatbot-window" id="window">
+        <div class="chat-header">
+            <h5><i class="fas fa-robot me-2"></i>譯德 AI 客服</h5>
+            <button class="btn-close-chat" id="close-btn"><i class="fas fa-times"></i></button>
+        </div>
+
+        <div class="chat-messages" id="messages">
+            <div class="message bot">
+                您好！我是譯德文教的 AI 助理。請問有什麼我可以幫您的嗎？
+            </div>
+        </div>
+
+        <span class="typing-indicator" id="typing">AI 正在輸入...</span>
+
+        <div class="chat-input-area">
+            <input type="text" id="msg-input" placeholder="請輸入訊息..." />
+            <button id="send-btn"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <my-footer></my-footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="components/header.js?v=5" type="module"></script>
+    <script src="components/footer.js?v=5" type="module"></script>
+    <script src="components/sidebar.js?v=5" type="module"></script>
+    <script src="router.js?v=5" type="module"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const launcher = document.getElementById('launcher');
+            const windowEl = document.getElementById('window');
+            const closeBtn = document.getElementById('close-btn');
+            const sendBtn = document.getElementById('send-btn');
+            const input = document.getElementById('msg-input');
+            const messagesContainer = document.getElementById('messages');
+            const typingIndicator = document.getElementById('typing');
+
+            let isOpen = false;
+            // 填入您的 API Key，若無則使用模擬回應
+            const API_KEY = '';
+
+            // 開關視窗
+            function toggleChat() {
+                isOpen = !isOpen;
+                if (isOpen) {
+                    windowEl.classList.add('open');
+                    input.focus();
+                } else {
+                    windowEl.classList.remove('open');
+                }
+            }
+
+            launcher.addEventListener('click', toggleChat);
+            closeBtn.addEventListener('click', toggleChat);
+
+            // 加入訊息到畫面
+            function addMessage(text, sender) {
+                const div = document.createElement('div');
+                div.classList.add('message', sender);
+                div.innerHTML = text.replace(/\n/g, '<br>');
+                messagesContainer.appendChild(div);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+
+            // 發送訊息
+            async function sendMessage() {
+                const text = input.value.trim();
+                if (!text) return;
+
+                addMessage(text, 'user');
+                input.value = '';
+                typingIndicator.style.display = 'block';
+
+                try {
+                    const reply = await callGeminiAPI(text);
+                    addMessage(reply, 'bot');
+                } catch (error) {
+                    console.error(error);
+                    addMessage("模擬回應：很高興收到您的訊息！(請設定 API Key 以啟用 AI)", 'bot');
+                } finally {
+                    typingIndicator.style.display = 'none';
+                }
+            }
+
+            sendBtn.addEventListener('click', sendMessage);
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') sendMessage();
+            });
+
+            // 呼叫 Gemini API
+            async function callGeminiAPI(userMessage) {
+                if (!API_KEY) {
+                    return new Promise(resolve => {
+                        setTimeout(() => resolve("這是模擬回應。請在 index.html 程式碼中填入您的 Gemini API Key 才能真正連線喔！"), 800);
+                    });
+                }
+
+                const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+                const prompt = `你現在是補習班客服。使用者說：${userMessage}`;
+
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                });
+
+                const data = await response.json();
+                return data.candidates[0].content.parts[0].text;
+            }
+        });
+    </script>
+
+</body>
+</html>

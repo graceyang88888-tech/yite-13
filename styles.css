@@ -1,0 +1,43 @@
+﻿/* styles.css - 全站樣式表 [cite: 12, 31] */
+
+/* 定義全站共用參數 (CSS Variables) [cite: 32] */
+:root {
+    --yite-blue: #162B4E; /* 品牌主色 (譯德深藍) [cite: 34] */
+    --yite-gold: #F2AC3E; /* 品牌強調色 (譯德金黃) [cite: 35] */
+    --text-white: #ffffff; /* [cite: 36] */
+    --text-light: #ecf0f1; /* [cite: 37] */
+    --text-dark: #333333; /* [cite: 38] */
+    --main-font: "Microsoft JhengHei", sans-serif; /* [cite: 39] */
+    --navbar-height: 70px; /* [cite: 40] */
+}
+
+body {
+    font-family: var(--main-font);
+    color: var(--text-dark);
+    padding-top: var(--navbar-height); /* 預留導覽列高度，避免內容被遮擋 */
+    margin: 0;
+    box-sizing: border-box;
+    background-color: #f8f9fa;
+}
+
+/* 讓 Footer 永遠置底的 Flexbox 設定 */
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+main {
+    flex: 1; /* 內容區自動撐開 */
+}
+
+/* Web Components 預設樣式 */
+my-header, my-footer, my-sidebar {
+    display: block;
+}
+
+/* 響應式圖片通用類別 */
+.img-fluid {
+    max-width: 100%;
+    height: auto;
+}
