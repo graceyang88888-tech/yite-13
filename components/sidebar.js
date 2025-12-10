@@ -2,7 +2,7 @@
 class SidebarLayout extends HTMLElement {
     constructor() {
         super();
-        this.attachShadow({ mode: 'open' });
+        this.attachShadow({ mode: 'open' }); // 啟用 Shadow DOM 封裝
     }
 
     connectedCallback() {
@@ -16,25 +16,51 @@ class SidebarLayout extends HTMLElement {
                 width: 100%;
             }
 
-            /* --- 核心佈局: 強制兩欄 Grid --- */
+            /* --- 核心佈局容器 (CSS Grid) --- */
             .layout-container {
                 display: grid;
-                /* 左側固定 280px，右側佔據剩餘空間 (1fr) */
-                grid-template-columns: 280px 1fr; 
                 gap: 30px; /* 欄位間距 */
                 padding: 40px 0;
-                align-items: start; /* 內容對齊頂部 */
+                align-items: start;
             }
 
-            /* 左側: 側邊欄外觀 */
+            /* --- 桌面版設定 (寬度大於 992px 時) --- */
+            @media (min-width: 992px) {
+                .layout-container {
+                    /* 強制切分兩欄：左側固定 280px，右側佔據剩餘空間 */
+                    /* minmax(0, 1fr) 是防止右側內容太寬撐爆版面的關鍵技巧 */
+                    grid-template-columns: 280px minmax(0, 1fr); 
+                }
+                
+                /* 桌面版側邊欄可以設定 Sticky (捲動時黏住) */
+                .sidebar {
+                    position: sticky;
+                    top: 100px; 
+                }
+            }
+
+            /* --- 手機版設定 (寬度小於 992px 時) --- */
+            @media (max-width: 991px) {
+                .layout-container {
+                    /* 變成單欄，讓內容自然堆疊 (上下顯示) */
+                    grid-template-columns: 1fr; 
+                    gap: 20px;
+                }
+                
+                /* 手機版側邊欄不需要 Sticky，改為一般區塊 */
+                .sidebar {
+                    position: static;
+                    margin-bottom: 20px; /* 與下方內容保持距離 */
+                }
+            }
+
+            /* --- 側邊欄外觀樣式 --- */
             .sidebar {
                 background-color: #fff;
                 border: 1px solid #eee;
                 border-radius: 8px;
                 padding: 20px;
                 box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-                position: sticky; /* 讓側邊欄捲動時黏在上方 */
-                top: 90px; /* 配合 Header 的高度與間距 */
             }
 
             .sidebar-title {
@@ -65,7 +91,6 @@ class SidebarLayout extends HTMLElement {
                 transform: translateX(5px);
             }
 
-            /* 目前頁面激活狀態 (需配合 JS 判斷網址) */
             .nav-link.active {
                 background-color: #162B4E;
                 color: #fff;
@@ -81,19 +106,12 @@ class SidebarLayout extends HTMLElement {
                 color: #fff;
             }
 
-            /* 右側: 內容區 */
+            /* 右側內容區塊 */
             .content-area {
-                /* 確保內容區塊內的圖片或元素不會撐爆 Grid */
-                min-width: 0; 
-                background-color: #fff; /* 若需要內容區白底可加 */
-                border-radius: 8px;
+                background-color: #fff;
+                min-width: 0; /* 防止內容撐爆 Grid */
+                width: 100%;
             }
-            
-            /* 注意：這裡刻意不加 Media Query (@media)，
-               嚴格遵守「不允許內容掉下來變成上下顯示」的要求。
-               在手機上，這會導致側邊欄與內容擠在一起，
-               使用者可能需要左右滑動。 */
-            
         </style>
 
         <div class="container">
@@ -120,12 +138,17 @@ class SidebarLayout extends HTMLElement {
         this.highlightActiveLink();
     }
 
-    // 自動標示當前頁面的連結為 Active
+    // 自動依據網址 Hash 點亮對應的選單項目
     highlightActiveLink() {
         const hash = window.location.hash;
+        // 如果網址有參數 (例如 #/news/1)，只取前面部分
+        const currentPath = hash.split('/')[1] ? '#/' + hash.split('/')[1] : '#/';
+
         const links = this.shadowRoot.querySelectorAll('.nav-link');
         links.forEach(link => {
-            if (link.getAttribute('href') === hash) {
+            const linkHref = link.getAttribute('href');
+            // 簡單的模糊比對，確保 /news/1 也能點亮 /news
+            if (hash.includes(linkHref.replace('#', ''))) {
                 link.classList.add('active');
             } else {
                 link.classList.remove('active');
